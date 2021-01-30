@@ -53,7 +53,13 @@ def testtimer():
             if last_lit > 0 and button < (last_lit - 1):
                 keypad.illuminate(button, 0x00, 0x20, 0x00)
             elif last_lit > 0 and button == (last_lit -1) and lit:
-                keypad.illuminate(button, 0x00, 0x20, 0x00)
+                # establish progress through as a fraction
+                progress = elapsed / duration if duration > 0.0 else 0.0
+                # colors: green => blue => red
+                r = int(64 * max(0, progress - 0.5))
+                g = int(64 * max(0, 0.5 - progress))
+                b = int(64 * max(0, 0.5 - abs(0.5 - progress)))
+                keypad.illuminate(button, r, g, b)
             else:
                 keypad.illuminate(button, 0x00, 0x00, 0x00)
 
