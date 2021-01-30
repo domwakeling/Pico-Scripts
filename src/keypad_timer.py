@@ -48,16 +48,17 @@ def testtimer():
             lit = not lit
             flash_elapsed = 0.0
         
-        # if the "last lit" isn't zero, we should be lighting one or more keys
+        # update key status
+        for button in range(0, NUM_PADS):
+            if last_lit > 0 and button < (last_lit - 1):
+                keypad.illuminate(button, 0x00, 0x20, 0x00)
+            elif last_lit > 0 and button == (last_lit -1) and lit:
+                keypad.illuminate(button, 0x00, 0x20, 0x00)
+            else:
+                keypad.illuminate(button, 0x00, 0x00, 0x00)
+
+        # if any button is lit (last_lit > 0) we need to process timers
         if last_lit > 0:
-            for button in range(0, NUM_PADS):
-                if button < (last_lit - 1):
-                    keypad.illuminate(button, 0x00, 0x20, 0x00)
-                elif button == (last_lit -1) and lit:
-                    keypad.illuminate(button, 0x00, 0x20, 0x00)
-                else:
-                    keypad.illuminate(button, 0x00, 0x00, 0x00)
-            # and we should also be increasing our elapsed timers
             elapsed += keypad_interval
             flash_elapsed += keypad_interval
             
@@ -67,6 +68,7 @@ def testtimer():
             elapsed = 0.0
             flash_elapsed = 0.0
         
+        # update the keypad (show lights!) and sleep until next button check
         keypad.update()
         time.sleep(keypad_interval)
 
